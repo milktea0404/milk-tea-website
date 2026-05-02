@@ -1,0 +1,571 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f">
+<title>SM Tendency Diagnosis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&family=Shippori+Mincho:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;}
+:root{--bg:#0a0a0f;--bg-2:#13131c;--fg:#f5f5f7;--muted:#8b8b95;--line:rgba(255,255,255,0.08);--accent:#e879f9;--accent-2:#a78bfa;--accent-3:#f472b6;}
+html,body{background:var(--bg);font-family:'Zen Kaku Gothic New','Inter',system-ui,sans-serif;color:var(--fg);min-height:100vh;overflow-x:hidden;}
+body{background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(232,121,249,0.15),transparent),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(167,139,250,0.12),transparent),var(--bg);background-attachment:fixed;}
+button{font-family:inherit;border:none;cursor:pointer;background:none;color:inherit;}
+.mono{font-family:'Inter',monospace;font-feature-settings:"tnum";}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shine{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes pulse{0%,100%{opacity:0.6}50%{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes blob{0%,100%{border-radius:50% 40% 60% 50%;transform:rotate(0)}50%{border-radius:40% 60% 40% 60%;transform:rotate(180deg)}}
+.app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;}
+.screen{flex:1;display:flex;flex-direction:column;animation:fadeIn 0.4s ease;}
+.container{width:100%;max-width:560px;margin:0 auto;padding:0 1.5rem;}
+.intro{justify-content:center;align-items:center;padding:2rem 0;position:relative;overflow:hidden;}
+.intro-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%);}
+.intro-blob{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(232,121,249,0.25),transparent 70%);filter:blur(40px);animation:blob 20s ease-in-out infinite;pointer-events:none;}
+.intro-blob.b1{top:-100px;left:-100px;}
+.intro-blob.b2{bottom:-100px;right:-100px;background:radial-gradient(circle,rgba(167,139,250,0.25),transparent 70%);animation-delay:-10s;}
+.intro-content{position:relative;z-index:1;text-align:center;animation:slideUp 0.8s cubic-bezier(0.16,1,0.3,1);}
+.intro-eyebrow{display:inline-flex;align-items:center;gap:0.5rem;padding:0.4rem 0.9rem;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:100px;font-size:0.72rem;letter-spacing:0.2em;color:var(--muted);margin-bottom:1.5rem;}
+.intro-eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 2s ease infinite;}
+.intro-title{font-family:'Shippori Mincho',serif;font-size:clamp(2.4rem,11vw,4.5rem);font-weight:600;line-height:1.1;letter-spacing:-0.02em;margin-bottom:0.6rem;background:linear-gradient(180deg,#fff 0%,#a78bfa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.intro-subtitle{font-size:0.9rem;color:var(--muted);letter-spacing:0.3em;margin-bottom:2.5rem;text-transform:uppercase;font-weight:300;}
+.intro-meta{display:flex;justify-content:center;gap:2rem;margin-bottom:3rem;}
+.intro-meta-item{text-align:center;}
+.intro-meta-num{font-family:'Shippori Mincho',serif;font-size:2rem;font-weight:500;color:var(--fg);line-height:1;margin-bottom:0.3rem;}
+.intro-meta-label{font-size:0.7rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;}
+.intro-divider{width:1px;background:var(--line);}
+.intro-btn{position:relative;display:inline-flex;align-items:center;gap:0.6rem;padding:1.1rem 3rem;background:var(--fg);color:var(--bg);border-radius:100px;font-size:0.95rem;font-weight:600;letter-spacing:0.05em;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);overflow:hidden;}
+.intro-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(232,121,249,0.4),transparent);background-size:200% 100%;animation:shine 3s linear infinite;}
+.intro-btn:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(232,121,249,0.3);}
+.intro-btn span{position:relative;z-index:1;}
+.intro-btn .arrow{transition:transform 0.3s ease;}
+.intro-btn:hover .arrow{transform:translateX(4px);}
+.intro-note{margin-top:2rem;color:#4a4a55;font-size:0.72rem;letter-spacing:0.1em;}
+.quiz{padding:2rem 0;}
+.quiz-header{padding:0 1.5rem;margin-bottom:2.5rem;}
+.quiz-progress{display:flex;align-items:center;gap:1rem;margin-bottom:0.8rem;}
+.quiz-progress-text{font-family:'Shippori Mincho',serif;font-size:0.85rem;color:var(--muted);font-feature-settings:"tnum";}
+.quiz-progress-num{color:var(--fg);font-weight:500;}
+.quiz-progress-bar{flex:1;height:2px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden;}
+.quiz-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent));border-radius:100px;transition:width 0.6s cubic-bezier(0.16,1,0.3,1);}
+.quiz-card{padding:0 1.5rem;animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1);}
+.quiz-card.exit{animation:fadeUp 0.25s reverse;}
+.q-num{font-family:'Shippori Mincho',serif;font-size:0.78rem;color:var(--muted);letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;}
+.q-num::after{content:'';flex:1;height:1px;background:var(--line);}
+.q-text{font-family:'Shippori Mincho',serif;font-size:clamp(1.15rem,4vw,1.45rem);line-height:1.85;color:var(--fg);margin-bottom:2.5rem;font-weight:400;}
+.q-options{display:flex;flex-direction:column;gap:0.6rem;}
+.q-opt{display:flex;align-items:center;gap:1rem;padding:1.1rem 1.4rem;background:rgba(255,255,255,0.025);border:1px solid var(--line);border-radius:14px;text-align:left;font-size:0.95rem;color:#c5c5cd;transition:all 0.25s cubic-bezier(0.16,1,0.3,1);width:100%;}
+.q-opt:hover{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.15);transform:translateX(4px);}
+.q-opt.selected{background:rgba(232,121,249,0.08);border-color:var(--accent);color:var(--fg);}
+.q-opt-marker{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);font-size:0.75rem;font-weight:600;color:var(--muted);transition:all 0.25s ease;font-family:'Inter',sans-serif;}
+.q-opt.selected .q-opt-marker{background:var(--accent);border-color:var(--accent);color:white;}
+.q-opt-label{flex:1;}
+.q-back{margin-top:2rem;padding:0.6rem 1rem;color:var(--muted);font-size:0.8rem;letter-spacing:0.1em;display:flex;align-items:center;gap:0.5rem;}
+.q-back:hover{color:var(--fg);}
+.result{padding:1.5rem 0 4rem;}
+.result-hero{position:relative;padding:1rem 1.5rem 0;animation:scaleIn 0.7s cubic-bezier(0.34,1.56,0.64,1);}
+.result-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+.result-glow{position:absolute;width:100%;height:60%;top:0;left:0;background:radial-gradient(ellipse at center top,var(--type-glow) 0%,transparent 60%);opacity:0.4;}
+.result-char{position:relative;z-index:1;display:flex;justify-content:center;margin-bottom:1.5rem;animation:float 5s ease-in-out infinite;}
+.result-meta{position:relative;z-index:1;text-align:center;margin-bottom:2rem;animation:fadeUp 0.6s 0.2s both;}
+.result-cat{display:inline-flex;align-items:center;gap:0.5rem;padding:0.35rem 0.9rem;border:1px solid currentColor;border-radius:100px;font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;margin-bottom:1.2rem;font-weight:500;font-family:'Inter',sans-serif;}
+.result-cat::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;}
+.result-name{font-family:'Shippori Mincho',serif;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:600;line-height:1.25;letter-spacing:0.02em;margin-bottom:0.3rem;}
+.result-name-en{font-size:0.7rem;color:var(--muted);letter-spacing:0.4em;text-transform:uppercase;}
+.result-section{padding:1rem 1.5rem;animation:fadeUp 0.6s both;}
+.result-section.delay-1{animation-delay:0.4s;}
+.result-section.delay-2{animation-delay:0.55s;}
+.result-section.delay-3{animation-delay:0.7s;}
+.result-section.delay-4{animation-delay:0.85s;}
+.section-label{font-family:'Inter',sans-serif;font-size:0.68rem;color:var(--muted);letter-spacing:0.3em;text-transform:uppercase;margin-bottom:0.9rem;display:flex;align-items:center;gap:0.6rem;font-weight:500;}
+.section-label::before{content:'';width:16px;height:1px;background:var(--muted);}
+.tags{display:flex;flex-wrap:wrap;gap:0.45rem;margin-bottom:1.2rem;}
+.tag{padding:0.4rem 0.9rem;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:100px;font-size:0.78rem;color:#d5d5dd;}
+.desc-card{background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid var(--line);border-radius:18px;padding:1.5rem;}
+.desc-text{font-family:'Shippori Mincho',serif;line-height:2;color:#dcdce4;font-size:0.95rem;}
+.tag-desc{color:var(--muted);font-size:0.82rem;line-height:1.85;margin-top:0.5rem;}
+.notice{padding:1rem 1.2rem;border-radius:14px;font-size:0.82rem;line-height:1.75;display:flex;gap:0.7rem;align-items:flex-start;}
+.notice-low{background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.2);color:#fda4a4;}
+.notice-high{background:rgba(110,231,183,0.06);border:1px solid rgba(110,231,183,0.2);color:#86efac;}
+.notice-icon{flex-shrink:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;}
+.compat-grid{display:grid;grid-template-columns:1fr;gap:0.7rem;}
+.compat-card{background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid var(--line);border-radius:16px;padding:1.2rem 1.4rem;}
+.compat-header{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.9rem;}
+.compat-mark{font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:700;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;}
+.compat-mark.ok{background:rgba(110,231,183,0.15);color:#6ee7b7;}
+.compat-mark.ng{background:rgba(248,113,113,0.15);color:#f87171;}
+.compat-title{font-size:0.78rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;font-weight:500;}
+.compat-list{list-style:none;display:flex;flex-direction:column;gap:0.4rem;}
+.compat-item{font-family:'Shippori Mincho',serif;font-size:0.92rem;color:#dcdce4;padding-left:1rem;position:relative;line-height:1.6;}
+.compat-item::before{content:'';position:absolute;left:0;top:0.7rem;width:5px;height:1px;background:var(--muted);}
+.actions{display:flex;flex-direction:column;gap:0.7rem;align-items:stretch;margin-top:2rem;padding:0 0.5rem;}
+.action-btn{padding:1rem;border-radius:100px;font-size:0.9rem;letter-spacing:0.08em;transition:all 0.25s ease;display:flex;align-items:center;justify-content:center;gap:0.5rem;font-weight:500;}
+.action-primary{background:var(--fg);color:var(--bg);}
+.action-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(255,255,255,0.15);}
+.action-secondary{background:rgba(255,255,255,0.04);border:1px solid var(--line);color:#c5c5cd;}
+.action-secondary:hover{background:rgba(255,255,255,0.08);}
+@media (min-width:640px){.compat-grid{grid-template-columns:1fr 1fr;}.actions{flex-direction:row;justify-content:center;}.action-btn{padding:1rem 2.4rem;}}
+</style>
+</head>
+<body>
+<div id="app" class="app"></div>
+<script>
+const QUESTIONS = [
+  "相手が自分の反応を細かく見ていると、緊張するより安心する。",
+  "自分が場の空気をコントロールしていると、落ち着く。",
+  "言葉で追い詰められるより、沈黙で圧をかけられる方が印象に残る。",
+  "相手が少し困った顔をすると、もっと反応を見たくなることがある。",
+  "自分の意思を一度預けてもいいと思える相手には、強く惹かれる。",
+  "身体的な刺激より、心理的な駆け引きの方が強く残る。",
+  "相手に「待て」と言われる状況は、嫌悪よりも高揚に近い。",
+  "自分が誰かを導く立場になると、自然に言葉が強くなる。",
+  "相手の余裕が崩れる瞬間に、魅力を感じることがある。",
+  "優しくされるより、少し試される方が相手の本気を感じる。",
+  "親密な相手には、自分の弱さを見抜かれてもいいと思う。",
+  "相手の反応に合わせて、自分の態度を意図的に変えることが多い。",
+  "強い言葉を向けられても、信頼できる相手ならむしろ距離が縮まる。",
+  "身体の自由を少し制限される状況に、怖さよりも集中を感じる。",
+  "相手が自分に従ってくれると、安心よりも責任感が先に来る。",
+  "相手に主導権を渡すには、かなり深い信頼が必要だと思う。",
+  "自分の言葉ひとつで相手の態度が変わると、満足感がある。",
+  "相手に見透かされているような感覚が嫌いではない。",
+  "ルールがある状況の方が、自由な状況より安心して振る舞える。",
+  "相手を褒めるより、少し煽って反応を引き出す方が得意だ。",
+  "自分が上に立つより、相手の意思に巻き込まれる方が楽な時がある。",
+  "身体的な接触そのものより、そこに至るまでの緊張感が重要だ。",
+  "相手が自分を怖がりすぎると、興味が薄れる。",
+  "相手の命令口調に、反発よりも集中が生まれることがある。",
+  "自分が優位な立場でも、相手の同意や反応確認がないと楽しめない。",
+  "強い刺激よりも、じわじわ逃げ場をなくされる感覚の方が印象深い。",
+  "相手を守るためなら、自分が悪役のような役回りになっても構わない。",
+  "恋愛や親密な関係では、対等でいるより役割がはっきりしている方が燃える。",
+  "相手に逆らえない状況より、逆らっても受け止められる状況に惹かれる。",
+  "相手の呼吸や表情の変化を読むのが得意だと思う。",
+  "自分の中の支配欲や服従欲は、昔からあるというより経験で強まった感覚がある。",
+  "痛みそのものより、それを与える／受ける関係性の意味に興味がある。",
+  "相手から制限や条件を与えられると、普段より自分の感覚が鋭くなる。",
+  "相手の限界を探るより、限界の手前で揺らす方が好みだ。",
+  "自分が求められていると感じると、自然に相手を受け入れる側に回る。",
+  "言葉で支配するより、態度や視線で空気を支配する方がしっくりくる。",
+  "相手の前で乱れるより、相手を乱す方に興味がある。",
+  "自分の欲求は、特定の相手や経験によって後から形になったと思う。",
+  "親密な場面では、安心感と少しの怖さが同時にある方が惹かれる。",
+  "相手が自分のために我慢していると感じると、強く反応してしまう。",
+  "相手に任せるより、自分で流れを決めた方が最後まで集中できる。",
+  "優しく扱われ続けると、少し物足りなく感じることがある。",
+  "相手を従わせるより、相手が自分から従いたくなる空気を作りたい。",
+  "強く扱われることより、「逃げてもいい」と分かった上で捕まる感覚に惹かれる。",
+  "相手の感情を揺らすより、自分の感情を揺らされる方が記憶に残る。",
+  "身体的な刺激がなくても、命令・禁止・許可だけで気持ちが動く。",
+  "主導権を持つ側にも、持たれる側にも、相手次第で自然に入れる。",
+  "自分の嗜好は、生まれつきというより「許された経験」で開いた気がする。",
+  "相手を傷つけたいというより、相手の奥にある本音を引き出したい。",
+  "自分の快感は、身体・精神・関係性のどれか一つではなく、複数が重なった時に強くなる。",
+];
+
+const SM = [
+  [{M:1,PSY:1,FOLLOW:1},{NEU:1},{LEAD:1}],
+  [{S:1,PSY:1,LEAD:2,NAT:1},{NEU:1},{FOLLOW:1}],
+  [{M:1,PSY:2},{PSY:1,NEU:1},{P:1}],
+  [{S:2,DS:1,PSY:1,LEAD:1,NAT:1},{NEU:1},{NEU:1}],
+  [{M:2,PSY:1,FOLLOW:2},{M:1,FOLLOW:1},{LEAD:1,NEU:1}],
+  [{PSY:2,S:1,M:1,SW:1},{PSY:1,SW:1},{P:2}],
+  [{M:2,DM:1,PSY:1,FOLLOW:2},{M:1,FOLLOW:1},{NEU:1}],
+  [{S:2,PSY:1,LEAD:2,NAT:1},{SW:1},{M:1,FOLLOW:1}],
+  [{S:2,DS:1,PSY:1,LEAD:1},{S:1,PSY:1},{NEU:1}],
+  [{M:1,DM:1,PSY:2,FOLLOW:1,ACQ:1},{PSY:1,NEU:1},{NEU:1}],
+  [{M:1,PSY:1,FOLLOW:1,ACQ:1},{NEU:1},{LEAD:1}],
+  [{S:1,PSY:1,LEAD:1,SW:1,ACQ:1},{SW:1},{NEU:1}],
+  [{M:2,PSY:2,FOLLOW:1},{M:1,PSY:1},{NEU:1}],
+  [{M:2,DM:1,P:2,FOLLOW:2},{M:1,P:1},{NEU:1}],
+  [{S:1,PSY:1,LEAD:2,SAFE:1},{S:1,LEAD:1},{DS:1,S:1}],
+  [{M:1,PSY:1,FOLLOW:1,ACQ:1},{NEU:1},{SW:2,FOLLOW:1}],
+  [{S:2,DS:1,PSY:2,LEAD:1,NAT:1},{S:1,PSY:1},{NEU:1}],
+  [{M:1,PSY:2,FOLLOW:1},{PSY:1,NEU:1},{LEAD:1}],
+  [{M:1,PSY:1,FOLLOW:1},{NEU:1},{SW:1,NEU:1}],
+  [{S:2,DS:1,PSY:1,LEAD:1},{S:1,PSY:1},{NEU:1}],
+  [{M:2,PSY:1,FOLLOW:2},{M:1,FOLLOW:1},{S:1,LEAD:1}],
+  [{PSY:2,S:1,M:1,SW:1},{PSY:1,NEU:1},{P:2}],
+  [{S:1,PSY:1,LEAD:1,SAFE:1},{S:1},{DS:1,S:1}],
+  [{M:2,PSY:1,FOLLOW:2},{M:1,FOLLOW:1},{NEU:1}],
+  [{S:1,PSY:1,LEAD:1,SAFE:2},{SAFE:1,NEU:1},{NEU:1}],
+  [{M:1,DM:1,PSY:2,FOLLOW:1},{M:1,PSY:1},{P:1,NEU:1}],
+  [{S:1,PSY:1,LEAD:2,ACQ:1},{SW:1},{NEU:1}],
+  [{S:1,M:1,PSY:1,SW:1},{SW:1,NEU:1},{NEU:2}],
+  [{M:1,PSY:2,FOLLOW:1,SAFE:1},{M:1,PSY:1},{DM:1,FOLLOW:1}],
+  [{S:1,PSY:2,LEAD:1,SW:1,NAT:1},{PSY:1,SW:1},{NEU:1}],
+  [{ACQ:3},{ACQ:1,NAT:1},{NAT:2}],
+  [{PSY:2,S:1,M:1,SW:1},{PSY:1,SW:1},{P:2}],
+  [{M:2,DM:1,PSY:2,FOLLOW:1},{M:1,PSY:1},{NEU:1}],
+  [{S:2,PSY:2,LEAD:1,SAFE:1},{S:1,PSY:1},{NEU:1}],
+  [{M:2,PSY:1,FOLLOW:2},{M:1,FOLLOW:1},{LEAD:1,NEU:1}],
+  [{S:2,PSY:2,LEAD:2,NAT:1},{S:1,PSY:1},{NEU:1}],
+  [{S:3,DS:1,LEAD:2},{S:1,SW:1},{M:1,FOLLOW:1}],
+  [{ACQ:3},{ACQ:1,NAT:1},{NAT:2}],
+  [{M:1,DM:1,PSY:2,FOLLOW:1},{M:1,PSY:1},{NEU:1}],
+  [{S:1,PSY:2,LEAD:1},{PSY:1,SW:1},{NEU:1}],
+  [{S:2,LEAD:2,NAT:1},{SW:1},{M:1,FOLLOW:1}],
+  [{M:1,DM:1,PSY:1,P:1},{M:1,PSY:1},{NEU:1}],
+  [{S:2,PSY:2,LEAD:2,SAFE:1,NAT:1},{S:1,PSY:1},{NEU:1}],
+  [{M:2,DM:1,PSY:2,FOLLOW:2,SAFE:1},{M:1,PSY:1},{NEU:1}],
+  [{M:2,PSY:2,FOLLOW:1},{M:1,SW:1},{S:1,LEAD:1}],
+  [{M:2,DM:1,PSY:2,FOLLOW:2},{M:1,PSY:1},{NEU:1}],
+  [{SW:3,S:1,M:1},{SW:1,NEU:1},{NEU:2}],
+  [{ACQ:3,PSY:1},{ACQ:1,NAT:1},{NAT:2}],
+  [{S:1,PSY:2,LEAD:1,SAFE:1},{PSY:1,SW:1},{NEU:1}],
+  [{P:1,PSY:1,SW:1},{NEU:1,SW:1},{NEU:1}],
+];
+
+const PM_TAGS = {
+  P:{name:'現場主義',desc:'身体の反応や実感で判断する。ライブ感が強い。'},
+  PSY:{name:'脳内会議',desc:'言葉・空気・視線・関係性に強く反応する。頭が一番忙しい。'},
+  both:{name:'全部入り定食',desc:'身体も心も全部大事。注文が多くなりやすい。'},
+  low:{name:'お茶漬け',desc:'強い刺激より安心感や雰囲気重視。'},
+};
+const LF_TAGS = {
+  LEAD:{name:'ハンドル握りたい派',desc:'流れを自分で決めると落ち着く。'},
+  FOLLOW:{name:'助手席で本領発揮',desc:'信頼できる相手に任せると深く入りやすい。'},
+  SW:{name:'交代制ドライバー',desc:'状況や相手で切り替え可能。'},
+  variable:{name:'交代制ドライバー',desc:'相手・状況で変わる可変型。'},
+  neutral:{name:'徒歩でも平気',desc:'上下より空気や安心感が大事。'},
+};
+const NA_TAGS = {
+  NAT:{name:'生まれつき',desc:'努力というより性質に近い。'},
+  ACQ:{name:'経験で扉が開いた',desc:'入口に物語がある後天タイプ。'},
+  mixed:{name:'種が育った',desc:'素質と経験が合わさった。'},
+  undefined:{name:'まだ名前をつける前',desc:'今後変わる可能性もある。'},
+};
+
+const RD = {
+  '心理戦の魔王課長':{cat:'S',en:'PSYCH WARFARE',color:'#a855f7',glow:'rgba(168,85,247,0.3)',desc:'言葉、空気、沈黙、視線で場を支配するタイプ。直接的な強さより「もう逃げ道ないよね？」という状況作りが得意。怖い上司みたいだが、ちゃんと相手を見ているなら名采配。',ok:['脳内正座の優等生','沼落ちフルコース受講生','読まれたい策士'],ng:['安全運転の一般通行人','自由奔放な野良猫タイプ']},
+  '現場監督系ドS':{cat:'S',en:'FIELD COMMANDER',color:'#ef4444',glow:'rgba(239,68,68,0.3)',desc:'理屈より反応を見て進める実践派。相手の反応が分かりやすいほど燃える。名前は怖いが、雑にやるとただの事故現場になるので調整力が命。',ok:['リアクション芸人M','タフグミ受け身職人','全部受けフルコース型'],ng:['心理だけで満足したいタイプ','境界線ガチガチ警備員']},
+  'フルコース支配シェフ':{cat:'S',en:'COURSE CHEF',color:'#c084fc',glow:'rgba(192,132,252,0.3)',desc:'身体も心も流れも全部まとめて設計したいタイプ。「前菜は緊張、メインは支配、デザートは余韻」みたいな謎のコース料理を出してくる。',ok:['沼落ちフルコース受講生','信頼預け型ドM','両面免許ゴールド保持者'],ng:['即興嫌いの完全対等派','気分が読めない無反応タイプ']},
+  '静かな圧の参謀S':{cat:'S',en:'SILENT STRATEGIST',color:'#60a5fa',glow:'rgba(96,165,250,0.3)',desc:'ガツガツ攻めるより、相手の心理を読んでじわっと主導するタイプ。本人は普通にしているつもりでも、なぜか周囲が従ってしまう。',ok:['読まれたい策士','脳内正座の優等生','空気で沈むM'],ng:['何でも明文化しないと不安なタイプ','ノリだけで動くタイプ']},
+  '反応観察ソムリエ':{cat:'S',en:'REACTION SOMMELIER',color:'#38bdf8',glow:'rgba(56,189,248,0.3)',desc:'相手の小さな反応を観察して、「今の良かったな」と内心で採点しているタイプ。Sというより、リアクション研究者。',ok:['リアクション芸人M','タフグミ受け身職人','褒められ待ちM'],ng:['反応が薄いタイプ','全部自分で決めたい主導権強めタイプ']},
+  '加減上手の飼育員':{cat:'S',en:'GENTLE KEEPER',color:'#fbbf24',glow:'rgba(251,191,36,0.3)',desc:'強く出るが、ちゃんと相手の状態を見るタイプ。支配欲と保護欲がセットで来るため、扱いが丁寧な時ほど逆に危ない。',ok:['甘やかされたい服従犬','信頼預け型ドM','両面免許ゴールド保持者'],ng:['放置されたい一匹狼','干渉嫌いタイプ']},
+  '悪役を引き受ける保護者':{cat:'S',en:'GUARDIAN VILLAIN',color:'#f472b6',glow:'rgba(244,114,182,0.3)',desc:'相手を壊したいというより、相手が安心して崩れられるように悪役を演じるタイプ。本人の中では「支配」より「管理」に近い。',ok:['信頼預け型ドM','安心して崩れたいタイプ','後天開花M'],ng:['本気で無責任なドM','確認を面倒がるタイプ']},
+  '天然ボス猿インテリ':{cat:'S',en:'NATURAL ALPHA',color:'#a3e635',glow:'rgba(163,230,53,0.3)',desc:'昔から自然に仕切る側。本人は「普通にしてるだけ」と思っているが、周囲から見るとだいぶ支配者。知性が乗ると厄介。',ok:['受け身が自然なM','補佐型スイッチ','従いたい優等生'],ng:['同じく天然ボス猿','完全自由主義タイプ']},
+  '後天開花の黒幕':{cat:'S',en:'LATE BLOOMER S',color:'#818cf8',glow:'rgba(129,140,248,0.3)',desc:'元から支配的というより、経験によって「主導した方がうまくいく」と学んだタイプ。計算が入るぶん、天然Sより少し職人っぽい。',ok:['後天開花M','心理型M','関係性重視タイプ'],ng:['勢いだけの肉体派','説明を嫌う感覚派']},
+  '脳内正座の優等生':{cat:'M',en:'INNER SEIZA',color:'#f9a8d4',glow:'rgba(249,168,212,0.3)',desc:'命令や禁止そのものより、「相手に見られている」「試されている」という構図に弱いタイプ。実際には座っていなくても心が正座している。',ok:['心理戦の魔王課長','静かな圧の参謀S','悪役を引き受ける保護者'],ng:['雑な現場監督系','放任主義タイプ']},
+  'リアクション芸人M':{cat:'M',en:'REACTION ARTIST',color:'#fcd34d',glow:'rgba(252,211,77,0.3)',desc:'反応が分かりやすく、相手にとって非常に扱いやすいタイプ。本人は真面目でも、結果的にリアクションが仕事をする。',ok:['反応観察ソムリエ','現場監督系ドS','加減上手の飼育員'],ng:['反応を見ないタイプ','精神戦だけで進めたいタイプ']},
+  '沼落ちフルコース受講生':{cat:'M',en:'FULL COURSE STUDENT',color:'#38bdf8',glow:'rgba(56,189,248,0.3)',desc:'身体、言葉、空気、関係性が全部重なった時に深く沈むタイプ。軽い診断のつもりで来たのに、なぜか卒業できない講座に入っている。',ok:['フルコース支配シェフ','心理戦の魔王課長','加減上手の飼育員'],ng:['途中で飽きるタイプ','主導権を取り返したいタイプ']},
+  '信頼預け型ドM':{cat:'M',en:'TRUST DEPOSITOR',color:'#d8b4fe',glow:'rgba(216,180,254,0.3)',desc:'誰でもいいわけではなく、信頼した相手にだけ深く預けるタイプ。主導権を渡すまでの審査は厳しいが、通過後はかなり深い。',ok:['悪役を引き受ける保護者','心理戦の魔王課長','静かな圧の参謀S'],ng:['無責任なドS','確認不足タイプ']},
+  'タフグミ受け身職人':{cat:'M',en:'TOUGH GUMMY',color:'#4ade80',glow:'rgba(74,222,128,0.3)',desc:'そこそこ強めの刺激にも向き合えるタイプ。ただし、タフだからといって雑に扱っていいわけではない。噛みごたえはあるが人間である。',ok:['現場監督系ドS','反応観察ソムリエ','両面免許ゴールド保持者'],ng:['繊細な心理型S','刺激が苦手なニュートラル']},
+  '空気で沈むM':{cat:'M',en:'SINK BY AIR',color:'#7dd3fc',glow:'rgba(125,211,252,0.3)',desc:'はっきり命令されなくても、空気や態度だけで相手の意図を読んで沈んでいくタイプ。察しが良すぎて勝手に深みに行く。',ok:['静かな圧の参謀S','心理戦の魔王課長','後天開花の黒幕'],ng:['明るすぎるノリ型','空気を読まない肉体派']},
+  '甘やかされたい服従犬':{cat:'M',en:'SPOILED PUP',color:'#fdba74',glow:'rgba(253,186,116,0.3)',desc:'強さだけではなく、最後にちゃんと受け止められることが重要なタイプ。厳しさと甘さの落差に弱い。',ok:['加減上手の飼育員','悪役を引き受ける保護者','フルコース支配シェフ'],ng:['放置型S','冷淡すぎるタイプ']},
+  '読まれたい策士':{cat:'M',en:'READABLE PLAYER',color:'#c4b5fd',glow:'rgba(196,181,253,0.3)',desc:'受け身に見えて、実は「自分を読ませる」ことで関係を動かすタイプ。弱いようでわりと策士。',ok:['静かな圧の参謀S','心理戦の魔王課長','補佐型スイッチ'],ng:['単純な力押しタイプ','読み合いが苦手なタイプ']},
+  '後天開花の沼の住人':{cat:'M',en:'LATE BLOOMER M',color:'#86efac',glow:'rgba(134,239,172,0.3)',desc:'最初からそうだったというより、特定の経験や相手によって嗜好が開いたタイプ。入口は狭いが、一度ハマると深い。',ok:['後天開花の黒幕','信頼預け型Mを扱えるS','関係性重視タイプ'],ng:['雑なドS','初対面から強く出るタイプ']},
+  '天然受け身の王族':{cat:'M',en:'NATURAL ROYAL M',color:'#fbcfe8',glow:'rgba(251,207,232,0.3)',desc:'昔から自然に受け身がしっくりくるタイプ。ただ従順というより、「受け入れる側としての貫禄」がある。なぜか従っているのに偉そう。',ok:['天然ボス猿インテリ','加減上手の飼育員','心理型S'],ng:['同じく受け身待ちタイプ','責任を取りたくないS']},
+  '両面免許ゴールド保持者':{cat:'SW',en:'GOLD LICENSE',color:'#fde047',glow:'rgba(253,224,71,0.3)',desc:'主導も受動もできる万能型。相手や状況に合わせて自然に切り替えられる。ただし便利屋扱いされると急に免許返納する。',ok:['片寄りの強いS','片寄りの強いM','関係性重視タイプ'],ng:['役割固定を強要するタイプ','曖昧さが許せないタイプ']},
+  '気分で役職変える部長':{cat:'SW',en:'MOOD MANAGER',color:'#67e8f9',glow:'rgba(103,232,249,0.3)',desc:'今日は仕切る、明日は預ける、みたいに日によって役職が変わるタイプ。本人の中では一貫しているが、周囲から見ると人事異動が激しい。',ok:['両対応スイッチ','穏やかS','穏やかM'],ng:['固定型ドS','固定型ドM']},
+  '補佐型スイッチ':{cat:'SW',en:'SUPPORT SWITCH',color:'#6ee7b7',glow:'rgba(110,231,183,0.3)',desc:'自分が前に出たいというより、相手に足りない役割を補うタイプ。相手が弱ければ支え、相手が強ければ預ける。便利だが疲れやすい。',ok:['悪役を引き受ける保護者','信頼預け型M','後天開花タイプ'],ng:['何も決めない丸投げタイプ','要求だけ多いタイプ']},
+  '現場対応型スイッチ':{cat:'SW',en:'FIELD SWITCH',color:'#fcd34d',glow:'rgba(252,211,77,0.3)',desc:'その場の反応で立ち位置を変える実践派。理論よりライブ感。うまく噛み合うと強いが、事前説明が雑だと事故りやすい。',ok:['反応観察ソムリエ','リアクション芸人M','加減上手の飼育員'],ng:['脳内ルール厳格タイプ','予測不能が苦手なタイプ']},
+  '心理戦スイッチ軍師':{cat:'SW',en:'TACTICAL SWITCH',color:'#a5b4fc',glow:'rgba(165,180,252,0.3)',desc:'攻めても受けても、心理の読み合いがメイン。どちらに回っても頭を使う。恋愛というより盤面管理を始めがち。',ok:['心理戦の魔王課長','読まれたい策士','静かな圧の参謀S'],ng:['単純明快な肉体派','会話が少ないタイプ']},
+  '全部入り闇鍋スイッチ':{cat:'SW',en:'EVERYTHING POT',color:'#f9a8d4',glow:'rgba(249,168,212,0.3)',desc:'できることが多いぶん、診断結果が闇鍋になりやすいタイプ。相手に合わせられるが、自分の本音を置き去りにしないことが重要。',ok:['フルコース支配シェフ','沼落ちフルコース受講生','同じ全部入り型'],ng:['単調な関係を好むタイプ','変化を嫌うタイプ']},
+  '試着室の住人':{cat:'SW',en:'FITTING ROOM',color:'#e9d5ff',glow:'rgba(233,213,255,0.3)',desc:'経験によって役割や嗜好をいろいろ試してきたタイプ。まだ固定されていない可能性も高い。変化を楽しめる相手と相性がいい。',ok:['後天開花の黒幕','後天開花の沼の住人','補佐型スイッチ'],ng:['決めつけが強いタイプ','初手でラベル固定するタイプ']},
+  '天然カメレオン':{cat:'SW',en:'NATURAL CHAMELEON',color:'#bbf7d0',glow:'rgba(187,247,208,0.3)',desc:'昔から相手に合わせて自然に役割が変わるタイプ。無理に合わせているのではなく、適応そのものが性質。',ok:['両面免許ゴールド保持者','静かな圧の参謀S','信頼預け型M'],ng:['役割固定を求めすぎるタイプ','自分軸が弱すぎる相手']},
+  '安全運転の一般通行人':{cat:'NEU',en:'SAFE DRIVER',color:'#cbd5e1',glow:'rgba(203,213,225,0.3)',desc:'強い支配・服従より、対等で穏やかな関係を好むタイプ。SM診断に来たのに、結果は「交通ルールを守りましょう」みたいになる。',ok:['穏やかS','穏やかM','補佐型スイッチ'],ng:['ドS','ドM','刺激強め全部入り型']},
+  '境界線ガチガチ警備員':{cat:'NEU',en:'BOUNDARY GUARD',color:'#fcd34d',glow:'rgba(252,211,77,0.3)',desc:'自分のラインが明確で、納得できないことは入場禁止にするタイプ。硬く見えるが、安心設計としてはかなり優秀。',ok:['悪役を引き受ける保護者','調整力高いスイッチ','穏やかタイプ'],ng:['押し切るタイプ','確認を面倒がるタイプ']},
+  '観察席の評論家':{cat:'NEU',en:'CRITIC SEAT',color:'#c7d2fe',glow:'rgba(199,210,254,0.3)',desc:'自分が深く入るより、人の関係性や心理を分析する方が得意なタイプ。診断結果を見て「なるほどね」と腕を組む。',ok:['心理戦スイッチ軍師','静かな圧の参謀S','読まれたい策士'],ng:['感覚だけで突っ走るタイプ','説明嫌いタイプ']},
+  'ぬるま湯の哲学者':{cat:'NEU',en:'WARM PHILOSOPHER',color:'#ddd6fe',glow:'rgba(221,214,254,0.3)',desc:'刺激の強さより、意味や雰囲気を重視するタイプ。SMというより「関係性の味」を楽しむ。温度は低めだが、深さはある。',ok:['関係性重視S','関係性重視M','補佐型スイッチ'],ng:['強刺激型','即物的な肉体派']},
+  '平和な変態未満':{cat:'NEU',en:'PEACEFUL CURIOUS',color:'#fce7f3',glow:'rgba(252,231,243,0.3)',desc:'興味はあるが、まだ自分の嗜好として固まっていないタイプ。入口に立って「へえ、みんな大変だね」と言っている。',ok:['試着室の住人','安全運転タイプ','穏やかスイッチ'],ng:['初手から強いタイプ','ラベルを押し付けるタイプ']},
+  '完全対等の握手会代表':{cat:'NEU',en:'EQUAL HANDSHAKE',color:'#a7f3d0',glow:'rgba(167,243,208,0.3)',desc:'主導権の上下より、対等さが大事なタイプ。どちらが上か下かより、「お互い納得してる？」が最優先。',ok:['SAFE高めタイプ','穏やかS','穏やかM'],ng:['支配構造が必須のタイプ','服従構造が必須のタイプ']},
+};
+
+const TC = {
+  '心理戦の魔王課長':{h:6,e:'cool',a:'crown',hc:'#3a2470',hcs:'#1f1248',hl:'#7c3aed',eye:'#a855f7'},
+  '現場監督系ドS':{h:1,e:'fierce',a:'none',hc:'#1a1a24',hcs:'#0a0a14',hl:'#dc2626',eye:'#dc2626'},
+  'フルコース支配シェフ':{h:5,e:'smug',a:'gem',hc:'#581c87',hcs:'#3b0764',hl:'#c084fc',eye:'#c084fc'},
+  '静かな圧の参謀S':{h:0,e:'mysterious',a:'none',hc:'#1e3a8a',hcs:'#0c1e4a',hl:'#3b82f6',eye:'#60a5fa'},
+  '反応観察ソムリエ':{h:1,e:'smug',a:'glasses',hc:'#0c4a6e',hcs:'#0a1e2e',hl:'#0ea5e9',eye:'#38bdf8'},
+  '加減上手の飼育員':{h:5,e:'gentle',a:'none',hc:'#92400e',hcs:'#451a03',hl:'#f59e0b',eye:'#fbbf24'},
+  '悪役を引き受ける保護者':{h:6,e:'cool',a:'gem',hc:'#581c87',hcs:'#3b0764',hl:'#ec4899',eye:'#f472b6'},
+  '天然ボス猿インテリ':{h:0,e:'smug',a:'glasses',hc:'#3f6212',hcs:'#1a3a00',hl:'#84cc16',eye:'#a3e635'},
+  '後天開花の黒幕':{h:2,e:'mysterious',a:'star',hc:'#312e81',hcs:'#1e1b4b',hl:'#6366f1',eye:'#818cf8'},
+  '脳内正座の優等生':{h:4,e:'gentle',a:'flower',hc:'#9f1239',hcs:'#5f0a23',hl:'#ec4899',eye:'#f472b6'},
+  'リアクション芸人M':{h:1,e:'happy',a:'star',hc:'#92400e',hcs:'#451a03',hl:'#f59e0b',eye:'#fcd34d'},
+  '沼落ちフルコース受講生':{h:5,e:'gentle',a:'gem',hc:'#0c4a6e',hcs:'#082f49',hl:'#0284c7',eye:'#38bdf8'},
+  '信頼預け型ドM':{h:4,e:'gentle',a:'flower',hc:'#581c87',hcs:'#3b0764',hl:'#a855f7',eye:'#d8b4fe'},
+  'タフグミ受け身職人':{h:1,e:'happy',a:'none',hc:'#166534',hcs:'#14532d',hl:'#16a34a',eye:'#4ade80'},
+  '空気で沈むM':{h:2,e:'mysterious',a:'none',hc:'#0c4a6e',hcs:'#082f49',hl:'#0284c7',eye:'#7dd3fc'},
+  '甘やかされたい服従犬':{h:4,e:'happy',a:'star',hc:'#9a3412',hcs:'#7c2d12',hl:'#f97316',eye:'#fdba74'},
+  '読まれたい策士':{h:6,e:'mysterious',a:'gem',hc:'#5b21b6',hcs:'#3b0764',hl:'#8b5cf6',eye:'#c4b5fd'},
+  '後天開花の沼の住人':{h:2,e:'gentle',a:'flower',hc:'#166534',hcs:'#14532d',hl:'#22c55e',eye:'#86efac'},
+  '天然受け身の王族':{h:4,e:'smug',a:'crown',hc:'#9f1239',hcs:'#5f0a23',hl:'#f472b6',eye:'#fbcfe8'},
+  '両面免許ゴールド保持者':{h:0,e:'wink',a:'star',hc:'#854d0e',hcs:'#451a03',hl:'#eab308',eye:'#fde047'},
+  '気分で役職変える部長':{h:1,e:'smug',a:'none',hc:'#155e75',hcs:'#082f49',hl:'#06b6d4',eye:'#67e8f9'},
+  '補佐型スイッチ':{h:0,e:'gentle',a:'none',hc:'#065f46',hcs:'#022c22',hl:'#10b981',eye:'#6ee7b7'},
+  '現場対応型スイッチ':{h:1,e:'happy',a:'star',hc:'#854d0e',hcs:'#451a03',hl:'#f59e0b',eye:'#fcd34d'},
+  '心理戦スイッチ軍師':{h:6,e:'mysterious',a:'glasses',hc:'#312e81',hcs:'#1e1b4b',hl:'#6366f1',eye:'#a5b4fc'},
+  '全部入り闇鍋スイッチ':{h:3,e:'wink',a:'gem',hc:'#9f1239',hcs:'#5f0a23',hl:'#ec4899',eye:'#f9a8d4'},
+  '試着室の住人':{h:4,e:'neutral',a:'flower',hc:'#581c87',hcs:'#3b0764',hl:'#c084fc',eye:'#e9d5ff'},
+  '天然カメレオン':{h:2,e:'happy',a:'none',hc:'#166534',hcs:'#14532d',hl:'#4ade80',eye:'#bbf7d0'},
+  '安全運転の一般通行人':{h:0,e:'neutral',a:'none',hc:'#475569',hcs:'#1e293b',hl:'#94a3b8',eye:'#cbd5e1'},
+  '境界線ガチガチ警備員':{h:1,e:'fierce',a:'gem',hc:'#854d0e',hcs:'#451a03',hl:'#f59e0b',eye:'#fcd34d'},
+  '観察席の評論家':{h:6,e:'smug',a:'glasses',hc:'#312e81',hcs:'#1e1b4b',hl:'#818cf8',eye:'#c7d2fe'},
+  'ぬるま湯の哲学者':{h:5,e:'gentle',a:'none',hc:'#5b21b6',hcs:'#3b0764',hl:'#a78bfa',eye:'#ddd6fe'},
+  '平和な変態未満':{h:4,e:'neutral',a:'flower',hc:'#9f1239',hcs:'#5f0a23',hl:'#f9a8d4',eye:'#fce7f3'},
+  '完全対等の握手会代表':{h:0,e:'happy',a:'none',hc:'#065f46',hcs:'#022c22',hl:'#34d399',eye:'#a7f3d0'},
+};
+
+function calcScores(answers) {
+  const sc = {S:0,M:0,DS:0,DM:0,P:0,PSY:0,LEAD:0,FOLLOW:0,SW:0,NAT:0,ACQ:0,NEU:0,SAFE:0};
+  for (let i = 0; i < 50; i++) {
+    const a = answers[i];
+    const src = a==='yes' ? SM[i][0] : a==='neutral' ? SM[i][1] : SM[i][2];
+    if (src) for (const k in src) sc[k] = (sc[k]||0) + src[k];
+  }
+  return sc;
+}
+
+function calcAxes(sc) {
+  const St=sc.S+sc.DS, Mt=sc.M+sc.DM, diff=St-Mt;
+  let smType;
+  if (St>15&&Mt>15&&sc.SW>8) smType='SW_both';
+  else if (diff>=12&&sc.DS>=5) smType='DS';
+  else if (diff<=-12&&sc.DM>=5) smType='DM';
+  else if (diff>=5) smType='S';
+  else if (diff<=-5) smType='M';
+  else smType='neutral';
+  const pd=sc.P-sc.PSY;
+  const pmType=pd>=5?'P':pd<=-5?'PSY':(sc.P>=8&&sc.PSY>=8)?'both':'low';
+  const ld=sc.LEAD-sc.FOLLOW;
+  const lfType=(sc.LEAD>10&&sc.FOLLOW>10)?'variable':ld>=5?'LEAD':ld<=-5?'FOLLOW':sc.SW>=5?'SW':'neutral';
+  const nd=sc.NAT-sc.ACQ;
+  const naType=(sc.NAT<3&&sc.ACQ<3)?'undefined':nd>=4?'NAT':nd<=-4?'ACQ':'mixed';
+  const safeLevel=sc.SAFE>=5?'high':sc.SAFE<=2?'low':'medium';
+  return {smType,pmType,lfType,naType,safeLevel,St,Mt,sc};
+}
+
+function getTypeName(a) {
+  const {smType,pmType,lfType,naType,St,Mt,sc} = a;
+  if (smType==='DS') {
+    if (pmType==='both') return 'フルコース支配シェフ';
+    if (pmType==='P') return '現場監督系ドS';
+    return '心理戦の魔王課長';
+  }
+  if (smType==='S') {
+    if (sc.SAFE>=5&&pmType==='PSY') return '悪役を引き受ける保護者';
+    if (naType==='NAT'&&lfType==='LEAD') return '天然ボス猿インテリ';
+    if (naType==='ACQ'&&pmType==='PSY') return '後天開花の黒幕';
+    if (pmType==='P'&&lfType==='LEAD') return '反応観察ソムリエ';
+    if (pmType==='both') return '加減上手の飼育員';
+    return '静かな圧の参謀S';
+  }
+  if (smType==='DM') {
+    if (pmType==='both') return '沼落ちフルコース受講生';
+    if (pmType==='P') return 'タフグミ受け身職人';
+    return '信頼預け型ドM';
+  }
+  if (smType==='M') {
+    if (naType==='NAT'&&lfType==='FOLLOW') return '天然受け身の王族';
+    if (naType==='ACQ') return '後天開花の沼の住人';
+    if (pmType==='P'&&lfType==='FOLLOW') return 'リアクション芸人M';
+    if (pmType==='both') return '甘やかされたい服従犬';
+    if (sc.SW>=5&&pmType==='PSY') return '読まれたい策士';
+    if (pmType==='PSY') return sc.FOLLOW>10?'空気で沈むM':'脳内正座の優等生';
+    return '脳内正座の優等生';
+  }
+  if (smType==='SW_both') return '両面免許ゴールド保持者';
+  if (St>8&&Mt>8&&sc.SW>=6) {
+    if (naType==='ACQ') return '試着室の住人';
+    if (naType==='NAT') return '天然カメレオン';
+    if (pmType==='both') return '全部入り闇鍋スイッチ';
+    if (pmType==='PSY') return '心理戦スイッチ軍師';
+    if (pmType==='P') return '現場対応型スイッチ';
+    if (lfType==='variable') return '気分で役職変える部長';
+    return '補佐型スイッチ';
+  }
+  if (sc.SAFE>=5&&sc.NEU>=8) return '境界線ガチガチ警備員';
+  if (sc.NEU>=8&&pmType==='PSY') return '観察席の評論家';
+  if (pmType==='PSY') return 'ぬるま湯の哲学者';
+  if (sc.LEAD<5&&sc.FOLLOW<5) return '完全対等の握手会代表';
+  if (St+Mt<6) return '平和な変態未満';
+  return '安全運転の一般通行人';
+}
+
+function charSVG(name, size) {
+  size = size || 220;
+  const c = TC[name] || {h:0,e:'neutral',a:'none',hc:'#475569',hcs:'#1e293b',hl:'#94a3b8',eye:'#cbd5e1'};
+  const id = 'c' + Math.abs(name.split('').reduce((a,c)=>((a<<5)-a+c.charCodeAt(0))|0, 0));
+  const sk = '#fde6cd';
+  const blush = '#f9a8d4';
+  const stroke = '#1a0a2e';
+  const sw = 1.6;
+  const swT = 1.1;
+
+  const backHairs = [
+    `<path d="M28 60 Q26 90 32 110 Q38 118 50 120 L70 120 Q82 118 88 110 Q94 90 92 60" fill="${c.hcs}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+    `<path d="M30 58 Q28 80 33 95 Q40 102 50 103 L70 103 Q80 102 87 95 Q92 80 90 58" fill="${c.hcs}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+    `<path d="M26 58 Q22 100 26 130 Q30 145 38 148 L82 148 Q90 145 94 130 Q98 100 94 58" fill="${c.hcs}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+    `<path d="M26 58 Q20 90 26 115 Q22 125 28 135 Q24 142 32 145 L88 145 Q96 142 92 135 Q98 125 94 115 Q100 90 94 58" fill="${c.hcs}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+    `<path d="M30 58 Q28 85 33 100 Q40 108 50 108 L70 108 Q80 108 87 100 Q92 85 90 58" fill="${c.hcs}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/><path d="M22 65 Q14 90 16 115 Q20 130 28 132 Q34 128 32 110 Q30 85 30 70 Z" fill="${c.hc}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/><path d="M98 65 Q106 90 104 115 Q100 130 92 132 Q86 128 88 110 Q90 85 90 70 Z" fill="${c.hc}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+    `<path d="M30 58 Q28 82 33 96 Q40 102 50 102 L70 102 Q80 102 87 96 Q92 82 90 58" fill="${c.hcs}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/><path d="M88 50 Q108 60 110 90 Q108 115 100 130 Q90 135 88 120 Q92 100 88 80 Z" fill="${c.hc}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+    `<path d="M28 58 Q24 95 30 120 Q36 130 46 130 L74 130 Q84 128 88 118 Q92 90 90 58" fill="${c.hcs}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+  ];
+
+  const frontHairs = [
+    `<path d="M28 50 Q30 38 45 32 Q60 28 75 32 Q90 38 92 50 Q92 60 88 62 L82 50 Q70 44 60 50 Q50 44 38 50 L32 62 Q28 60 28 50 Z" fill="${c.hc}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+    `<path d="M30 52 Q32 38 48 32 Q60 30 72 32 Q88 38 90 52 Q86 50 80 48 Q72 56 62 50 Q52 56 42 50 Q34 50 30 52 Z" fill="${c.hc}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+    `<path d="M28 52 Q30 36 48 32 Q58 30 60 38 Q62 30 72 32 Q90 36 92 52 L88 50 Q78 48 68 54 L62 38 L58 38 L52 54 Q42 48 32 50 Z" fill="${c.hc}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+    `<path d="M28 52 Q30 36 48 32 Q60 28 72 32 Q90 36 92 52 Q88 56 84 50 Q76 56 70 50 Q62 56 56 50 Q48 56 40 50 Q34 56 28 52 Z" fill="${c.hc}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+    `<path d="M28 52 Q30 38 46 32 Q60 28 74 32 Q90 38 92 52 Q88 50 82 48 Q72 56 62 50 Q52 56 42 50 Q32 50 28 52 Z" fill="${c.hc}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+    `<path d="M28 52 Q30 38 46 32 Q60 28 74 32 Q90 38 92 52 Q86 48 78 50 Q68 56 60 48 Q50 56 40 50 Q32 50 28 52 Z" fill="${c.hc}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+    `<path d="M28 52 Q30 36 48 32 Q62 28 78 32 Q90 36 92 52 Q86 50 80 48 L70 56 Q60 48 50 54 L42 50 Q34 50 28 52 Z" fill="${c.hc}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/><path d="M28 52 Q26 70 30 90 Q34 100 42 102 Q40 80 38 60 Z" fill="${c.hc}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`,
+  ];
+
+  const faces = {
+    cool: `<path d="M40 56 Q46 54 52 56" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M68 56 Q74 54 80 56" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M38 68 L52 66" stroke="${stroke}" stroke-width="${sw*1.1}" stroke-linecap="round" fill="none"/><path d="M68 66 L82 68" stroke="${stroke}" stroke-width="${sw*1.1}" stroke-linecap="round" fill="none"/><ellipse cx="45" cy="71" rx="3.5" ry="4.5" fill="${c.eye}" stroke="${stroke}" stroke-width="${swT}"/><ellipse cx="75" cy="71" rx="3.5" ry="4.5" fill="${c.eye}" stroke="${stroke}" stroke-width="${swT}"/><ellipse cx="45" cy="71" rx="1.6" ry="2.5" fill="${stroke}"/><ellipse cx="75" cy="71" rx="1.6" ry="2.5" fill="${stroke}"/><ellipse cx="46.5" cy="69" rx="1" ry="1.4" fill="white"/><ellipse cx="76.5" cy="69" rx="1" ry="1.4" fill="white"/><path d="M55 88 Q60 86 65 88" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/>`,
+    fierce: `<path d="M38 56 L52 60" stroke="${stroke}" stroke-width="${sw*1.2}" stroke-linecap="round" fill="none"/><path d="M82 56 L68 60" stroke="${stroke}" stroke-width="${sw*1.2}" stroke-linecap="round" fill="none"/><path d="M38 66 L52 68" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M68 68 L82 66" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><ellipse cx="45" cy="72" rx="4" ry="5" fill="${c.eye}" stroke="${stroke}" stroke-width="${swT}"/><ellipse cx="75" cy="72" rx="4" ry="5" fill="${c.eye}" stroke="${stroke}" stroke-width="${swT}"/><ellipse cx="45" cy="72" rx="1.8" ry="3" fill="${stroke}"/><ellipse cx="75" cy="72" rx="1.8" ry="3" fill="${stroke}"/><ellipse cx="46.5" cy="70" rx="1" ry="1.5" fill="white"/><ellipse cx="76.5" cy="70" rx="1" ry="1.5" fill="white"/><path d="M52 90 L68 90" stroke="${stroke}" stroke-width="${sw*1.1}" stroke-linecap="round" fill="none"/>`,
+    happy: `<path d="M38 56 Q46 53 52 56" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M68 56 Q74 53 82 56" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><ellipse cx="45" cy="70" rx="4.5" ry="5.5" fill="${c.eye}" stroke="${stroke}" stroke-width="${swT}"/><ellipse cx="75" cy="70" rx="4.5" ry="5.5" fill="${c.eye}" stroke="${stroke}" stroke-width="${swT}"/><ellipse cx="45" cy="71" rx="2" ry="3" fill="${stroke}"/><ellipse cx="75" cy="71" rx="2" ry="3" fill="${stroke}"/><ellipse cx="46.5" cy="68" rx="1.4" ry="1.8" fill="white"/><ellipse cx="76.5" cy="68" rx="1.4" ry="1.8" fill="white"/><ellipse cx="34" cy="80" rx="6" ry="3.5" fill="${blush}" opacity="0.7"/><ellipse cx="86" cy="80" rx="6" ry="3.5" fill="${blush}" opacity="0.7"/><path d="M52 86 Q60 94 68 86" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="${blush}" fill-opacity="0.6"/>`,
+    gentle: `<path d="M38 56 Q46 54 52 56" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M68 56 Q74 54 82 56" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M40 70 Q45 74 50 70" stroke="${stroke}" stroke-width="${sw*1.1}" stroke-linecap="round" fill="none"/><path d="M70 70 Q75 74 80 70" stroke="${stroke}" stroke-width="${sw*1.1}" stroke-linecap="round" fill="none"/><ellipse cx="34" cy="80" rx="5.5" ry="3" fill="${blush}" opacity="0.6"/><ellipse cx="86" cy="80" rx="5.5" ry="3" fill="${blush}" opacity="0.6"/><path d="M54 88 Q60 91 66 88" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/>`,
+    mysterious: `<path d="M38 55 Q46 53 52 56" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M68 56 Q74 53 82 55" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M38 70 Q45 65 52 70 Q45 73 38 70 Z" fill="${c.eye}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/><path d="M68 70 Q75 65 82 70 Q75 73 68 70 Z" fill="${c.eye}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/><ellipse cx="45" cy="69" rx="1.5" ry="2" fill="${stroke}"/><ellipse cx="75" cy="69" rx="1.5" ry="2" fill="${stroke}"/><ellipse cx="46" cy="68" rx="0.8" ry="1.2" fill="white"/><ellipse cx="76" cy="68" rx="0.8" ry="1.2" fill="white"/><path d="M56 88 Q60 86 64 88" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/>`,
+    smug: `<path d="M38 54 L52 58" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M82 54 L68 58" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M38 67 L52 69" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M68 69 L82 67" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><ellipse cx="45" cy="72" rx="4" ry="4" fill="${c.eye}" stroke="${stroke}" stroke-width="${swT}"/><ellipse cx="75" cy="72" rx="4" ry="4" fill="${c.eye}" stroke="${stroke}" stroke-width="${swT}"/><ellipse cx="45" cy="72" rx="1.7" ry="2.5" fill="${stroke}"/><ellipse cx="75" cy="72" rx="1.7" ry="2.5" fill="${stroke}"/><ellipse cx="46.5" cy="70" rx="1.1" ry="1.4" fill="white"/><ellipse cx="76.5" cy="70" rx="1.1" ry="1.4" fill="white"/><path d="M52 88 Q63 92 67 86" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/>`,
+    neutral: `<path d="M38 56 Q46 55 52 56" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M68 56 Q74 55 82 56" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><ellipse cx="45" cy="71" rx="4" ry="5" fill="${c.eye}" stroke="${stroke}" stroke-width="${swT}"/><ellipse cx="75" cy="71" rx="4" ry="5" fill="${c.eye}" stroke="${stroke}" stroke-width="${swT}"/><ellipse cx="45" cy="71" rx="1.7" ry="2.7" fill="${stroke}"/><ellipse cx="75" cy="71" rx="1.7" ry="2.7" fill="${stroke}"/><ellipse cx="46.5" cy="69" rx="1.1" ry="1.5" fill="white"/><ellipse cx="76.5" cy="69" rx="1.1" ry="1.5" fill="white"/><path d="M55 88 Q60 89 65 88" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/>`,
+    wink: `<path d="M38 56 Q46 53 52 56" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M68 56 Q74 53 82 56" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="none"/><path d="M40 70 Q45 74 50 70" stroke="${stroke}" stroke-width="${sw*1.2}" stroke-linecap="round" fill="none"/><ellipse cx="75" cy="70" rx="4.5" ry="5.5" fill="${c.eye}" stroke="${stroke}" stroke-width="${swT}"/><ellipse cx="75" cy="71" rx="2" ry="3" fill="${stroke}"/><ellipse cx="76.5" cy="68" rx="1.4" ry="1.8" fill="white"/><ellipse cx="34" cy="80" rx="5.5" ry="3" fill="${blush}" opacity="0.7"/><ellipse cx="86" cy="80" rx="5.5" ry="3" fill="${blush}" opacity="0.7"/><path d="M53 87 Q60 92 67 87" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" fill="${blush}" fill-opacity="0.5"/>`,
+  };
+
+  const accs = {
+    crown: `<g transform="translate(45,12)"><path d="M2 18 L5 4 L12 12 L15 0 L18 12 L25 4 L28 18 Z" fill="#fde047" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/><rect x="2" y="18" width="26" height="5" rx="1" fill="#facc15" stroke="${stroke}" stroke-width="${sw}"/><circle cx="15" cy="3" r="2" fill="#f472b6" stroke="${stroke}" stroke-width="${swT}"/><circle cx="5.5" cy="9" r="1.4" fill="#60a5fa" stroke="${stroke}" stroke-width="${swT}"/><circle cx="24.5" cy="9" r="1.4" fill="#34d399" stroke="${stroke}" stroke-width="${swT}"/></g>`,
+    gem: `<g transform="translate(54,14)"><polygon points="6,0 12,5 10,16 2,16 0,5" fill="${c.hl}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/><polygon points="6,0 12,5 6,8 0,5" fill="white" fill-opacity="0.4" stroke="${stroke}" stroke-width="${swT}"/></g>`,
+    star: `<g transform="translate(53,10)"><polygon points="7,0 9,5 14,5 10,9 12,14 7,11 2,14 4,9 0,5 5,5" fill="#fde047" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/></g>`,
+    flower: `<g transform="translate(80,22)"><ellipse cx="0" cy="-5" rx="3.2" ry="2.4" fill="${blush}" stroke="${stroke}" stroke-width="${swT}"/><ellipse cx="4.5" cy="-1.5" rx="3.2" ry="2.4" fill="${blush}" stroke="${stroke}" stroke-width="${swT}" transform="rotate(60)"/><ellipse cx="2.5" cy="4" rx="3.2" ry="2.4" fill="${blush}" stroke="${stroke}" stroke-width="${swT}" transform="rotate(120)"/><ellipse cx="-2.5" cy="4" rx="3.2" ry="2.4" fill="${blush}" stroke="${stroke}" stroke-width="${swT}" transform="rotate(180)"/><ellipse cx="-4.5" cy="-1.5" rx="3.2" ry="2.4" fill="${blush}" stroke="${stroke}" stroke-width="${swT}" transform="rotate(240)"/><circle cx="0" cy="0" r="2" fill="#fde047" stroke="${stroke}" stroke-width="${swT}"/></g>`,
+    glasses: `<g><circle cx="45" cy="71" r="9" fill="white" fill-opacity="0.15" stroke="${stroke}" stroke-width="${sw*1.3}"/><circle cx="75" cy="71" r="9" fill="white" fill-opacity="0.15" stroke="${stroke}" stroke-width="${sw*1.3}"/><line x1="54" y1="71" x2="66" y2="71" stroke="${stroke}" stroke-width="${sw*1.3}"/><line x1="36" y1="69" x2="30" y2="68" stroke="${stroke}" stroke-width="${sw*1.3}"/><line x1="84" y1="69" x2="90" y2="68" stroke="${stroke}" stroke-width="${sw*1.3}"/></g>`,
+    none: '',
+  };
+
+  return `<svg viewBox="0 0 120 150" width="${size}" height="${size}" style="overflow:visible;display:block">
+    <defs><radialGradient id="${id}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="${c.hl}" stop-opacity="0.25"/><stop offset="100%" stop-color="${c.hl}" stop-opacity="0"/></radialGradient></defs>
+    <circle cx="60" cy="80" r="65" fill="url(#${id})"/>
+    ${backHairs[c.h]}
+    <path d="M53 92 Q53 100 55 105 L65 105 Q67 100 67 92 Z" fill="${sk}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>
+    <path d="M30 110 Q26 120 28 140 L92 140 Q94 120 90 110 Q80 105 70 108 L60 118 L50 108 Q40 105 30 110 Z" fill="${c.hl}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>
+    <path d="M50 108 L60 118 L70 108 L66 105 L60 112 L54 105 Z" fill="white" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>
+    <path d="M32 65 Q32 50 40 42 Q50 35 60 35 Q70 35 80 42 Q88 50 88 65 Q88 82 78 92 Q70 98 60 98 Q50 98 42 92 Q32 82 32 65 Z" fill="${sk}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>
+    <path d="M32 68 Q28 70 28 76 Q30 80 33 78" fill="${sk}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>
+    <path d="M88 68 Q92 70 92 76 Q90 80 87 78" fill="${sk}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>
+    ${frontHairs[c.h]}
+    ${faces[c.e] || faces.neutral}
+    ${accs[c.a] || ''}
+  </svg>`;
+}
+
+const state = {screen:'intro', current:0, answers:{}, result:null, busy:false};
+
+function setState(p) {
+  Object.assign(state, p);
+  render();
+}
+
+function renderIntro() {
+  return `<div class="screen intro"><div class="intro-grid"></div><div class="intro-blob b1"></div><div class="intro-blob b2"></div><div class="container"><div class="intro-content"><div class="intro-eyebrow">PSYCHOLOGICAL DIAGNOSIS</div><h1 class="intro-title">SM<br>Tendency</h1><div class="intro-subtitle">本当のあなたを知る</div><div class="intro-meta"><div class="intro-meta-item"><div class="intro-meta-num">50</div><div class="intro-meta-label">Questions</div></div><div class="intro-divider"></div><div class="intro-meta-item"><div class="intro-meta-num">33</div><div class="intro-meta-label">Types</div></div><div class="intro-divider"></div><div class="intro-meta-item"><div class="intro-meta-num">5</div><div class="intro-meta-label">Minutes</div></div></div><button class="intro-btn" onclick="onStart()"><span>診断を始める</span><span class="arrow">→</span></button><div class="intro-note">※ 18歳以上向け / 結果は外部に保存されません</div></div></div></div>`;
+}
+
+function renderQuiz() {
+  const cur = state.current;
+  const pct = (cur/50)*100;
+  const ans = state.answers[cur];
+  const opts = [{k:'yes',label:'はい',mark:'A'},{k:'neutral',label:'どちらでもない',mark:'B'},{k:'no',label:'いいえ',mark:'C'}];
+  const optHTML = opts.map(o => {
+    const sel = ans === o.k;
+    return `<button class="q-opt ${sel?'selected':''}" onclick="onAnswer('${o.k}')"><div class="q-opt-marker">${o.mark}</div><div class="q-opt-label">${o.label}</div></button>`;
+  }).join('');
+  return `<div class="screen quiz"><div class="quiz-header"><div class="quiz-progress"><span class="quiz-progress-text mono"><span class="quiz-progress-num">${String(cur+1).padStart(2,'0')}</span> <span style="color:#4a4a55">/</span> 50</span><div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${pct}%"></div></div></div></div><div id="qcard" class="quiz-card"><div class="container"><div class="q-num mono">QUESTION ${String(cur+1).padStart(2,'0')}</div><div class="q-text">${QUESTIONS[cur]}</div><div class="q-options">${optHTML}</div>${cur > 0 ? '<button class="q-back" onclick="onBack()"><span>←</span> 前の質問</button>' : ''}</div></div></div>`;
+}
+
+function renderResult() {
+  const r = state.result;
+  if (!r) return '';
+  const {typeName, typeData, axes} = r;
+  const ac = typeData.color;
+  const glow = typeData.glow;
+  const catLabel = {S:'DOMINANT',M:'SUBMISSIVE',SW:'SWITCH',NEU:'NEUTRAL'};
+  const pm = PM_TAGS[axes.pmType] || PM_TAGS.low;
+  const lf = LF_TAGS[axes.lfType] || LF_TAGS.neutral;
+  const na = NA_TAGS[axes.naType] || NA_TAGS.undefined;
+  const tags = [pm,lf,na].map(t => `<span class="tag">${t.name}</span>`).join('');
+  const okList = (typeData.ok || []).map(t => `<li class="compat-item">${t}</li>`).join('');
+  const ngList = (typeData.ng || []).map(t => `<li class="compat-item">${t}</li>`).join('');
+  let safeMsg = '';
+  if (axes.safeLevel === 'low') {
+    safeMsg = `<div class="result-section delay-3"><div class="container"><div class="notice notice-low"><div class="notice-icon">!</div><div><strong style="color:#fca5a5">注意</strong>　刺激への反応が強い一方、境界線の確認が弱くなる可能性があります。安心できるルール作りを大切に。</div></div></div></div>`;
+  } else if (axes.safeLevel === 'high') {
+    safeMsg = `<div class="result-section delay-3"><div class="container"><div class="notice notice-high"><div class="notice-icon">✓</div><div><strong style="color:#86efac">補足</strong>　相手の反応や境界線を見ながら調整する力が高めです。相性の幅が広い傾向があります。</div></div></div></div>`;
+  }
+  return `<div class="screen result" style="--type-color:${ac};--type-glow:${glow}"><div class="result-hero"><div class="result-bg"><div class="result-glow"></div></div><div class="container"><div class="result-char">${charSVG(typeName, 240)}</div><div class="result-meta"><div class="result-cat" style="color:${ac}">${catLabel[typeData.cat] || ''}</div><h1 class="result-name" style="color:${ac};text-shadow:0 0 40px ${glow}">${typeName}</h1><div class="result-name-en mono">${typeData.en}</div></div></div></div><div class="result-section delay-1"><div class="container"><div class="section-label">Profile</div><div class="tags">${tags}</div><div class="tag-desc">${pm.desc}　${lf.desc}　${na.desc}</div></div></div><div class="result-section delay-2"><div class="container"><div class="section-label">Diagnosis</div><div class="desc-card"><div class="desc-text">${typeData.desc}</div></div></div></div>${safeMsg}<div class="result-section delay-4"><div class="container"><div class="section-label">Compatibility</div><div class="compat-grid"><div class="compat-card"><div class="compat-header"><div class="compat-mark ok">+</div><div class="compat-title">相性◎</div></div><ul class="compat-list">${okList}</ul></div><div class="compat-card"><div class="compat-header"><div class="compat-mark ng">−</div><div class="compat-title">相性✗</div></div><ul class="compat-list">${ngList}</ul></div></div><div class="actions"><button class="action-btn action-primary" onclick="onShare()"><span>結果をシェア</span><span>↗</span></button><button class="action-btn action-secondary" onclick="onRetry()">もう一度診断する</button></div></div></div></div>`;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  if (state.screen === 'intro') app.innerHTML = renderIntro();
+  else if (state.screen === 'quiz') app.innerHTML = renderQuiz();
+  else if (state.screen === 'result') app.innerHTML = renderResult();
+  window.scrollTo(0, 0);
+}
+
+function onStart() { setState({screen:'quiz', current:0, answers:{}}); }
+
+function onAnswer(a) {
+  if (state.busy) return;
+  state.busy = true;
+  state.answers[state.current] = a;
+  render();
+  setTimeout(() => {
+    const card = document.getElementById('qcard');
+    if (card) card.classList.add('exit');
+    setTimeout(() => {
+      if (state.current < 49) {
+        state.current += 1;
+        state.busy = false;
+        render();
+      } else {
+        const scores = calcScores(state.answers);
+        const axes = calcAxes(scores);
+        const typeName = getTypeName(axes);
+        const typeData = RD[typeName] || Object.values(RD)[0];
+        state.busy = false;
+        setState({screen:'result', result:{typeName, typeData, axes, scores}});
+      }
+    }, 230);
+  }, 280);
+}
+
+function onBack() {
+  if (state.busy || state.current === 0) return;
+  state.busy = true;
+  const card = document.getElementById('qcard');
+  if (card) card.classList.add('exit');
+  setTimeout(() => {
+    state.current -= 1;
+    state.busy = false;
+    render();
+  }, 230);
+}
+
+function onRetry() { setState({screen:'intro', current:0, answers:{}, result:null}); }
+
+function onShare() {
+  const r = state.result;
+  if (!r) return;
+  const text = `【SM Tendency Diagnosis】\n私のタイプは「${r.typeName}」でした。\n\n${r.typeData.desc}\n\n#SM傾向診断`;
+  const url = window.location.href;
+  if (navigator.share) {
+    navigator.share({title:'SM Tendency Diagnosis', text, url}).catch(()=>{});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text + '\n' + url).then(() => alert('結果をクリップボードにコピーしました')).catch(() => alert('シェアに失敗しました'));
+  }
+}
+
+render();
+</script>
+</body>
+</html>
+
